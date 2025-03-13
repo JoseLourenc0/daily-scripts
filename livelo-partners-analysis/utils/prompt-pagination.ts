@@ -30,8 +30,8 @@ export const paginate = async (pageSize: number, items: DisplayItems[]) => {
     displayPage(currentPage, pageSize, items);
 
     const choices = [];
-    if (currentPage > 0) choices.push(previousPage);
     if (currentPage < totalPages - 1) choices.push(nextPage);
+    if (currentPage > 0) choices.push(previousPage);
     choices.push(leaveOption);
 
     const answer = await inquirer.prompt([

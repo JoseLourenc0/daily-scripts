@@ -31,6 +31,7 @@ const main = async () => {
     .sort((a, b) => b.parityClub - a.parityClub)
     .map(
       ({
+        partnerDetailsPage,
         parityClub,
         parity,
         currency,
@@ -41,6 +42,7 @@ const main = async () => {
       }, index) => ({
         index,
         parityClub,
+        partnerDetailsPage,
         parity,
         currency,
         value,
