@@ -1,10 +1,11 @@
-import { getAvailablePartnersCod } from "./partners-config";
-import { getPartnersCampaign } from "./partners-campaign";
+import { getAvailablePartnersCod } from "./utils/partners-config";
+import { getPartnersCampaign } from "./utils/partners-campaign";
 import { type Partner } from "./types/partners-config.interface";
 import { type PartnerCampaign } from "./types/partners-campaign.interface";
 import { shortenString } from "./utils/shorten-string";
 import type { DisplayItems } from "./types/display.interface";
 import { paginate } from "./utils/prompt-pagination";
+import { openFavoriteMenu } from "./utils/favorite-menu";
 
 type CustomActiveCampaignPartner = PartnerCampaign & Partner;
 
@@ -53,7 +54,12 @@ const main = async () => {
     );
 
 //   console.table(coolInfo);
-    paginate(PAGE_SIZE, coolInfo);
+    // const action = 'favorite'
+    const action = await paginate(PAGE_SIZE, coolInfo);
+
+    if (action === 'favorite') {
+      openFavoriteMenu(coolInfo)
+    }
 };
 
 main();

@@ -23,8 +23,10 @@ export const paginate = async (pageSize: number, items: DisplayItems[]) => {
   let currentPage = 0;
   const previousPage = "Previous Page";
   const nextPage = "Next Page";
+  const favoritePartners = "Favoritar"
   const leaveOption = "Exit";
   const totalPages = Math.ceil(items.length / pageSize);
+  let action: 'favorite' | null = null
 
   while (true) {
     displayPage(currentPage, pageSize, items);
@@ -32,6 +34,7 @@ export const paginate = async (pageSize: number, items: DisplayItems[]) => {
     const choices = [];
     if (currentPage < totalPages - 1) choices.push(nextPage);
     if (currentPage > 0) choices.push(previousPage);
+    choices.push(favoritePartners)
     choices.push(leaveOption);
 
     const answer = await inquirer.prompt([
@@ -49,6 +52,10 @@ export const paginate = async (pageSize: number, items: DisplayItems[]) => {
       currentPage--;
     } else if (answer.action === leaveOption) {
       break;
+    } else if (answer.action === favoritePartners) {
+      action = 'favorite'
+      break;
     }
   }
+  return action
 };

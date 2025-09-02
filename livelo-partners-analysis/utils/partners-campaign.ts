@@ -1,7 +1,7 @@
 import axios from "axios";
-import { config } from "./config";
-import { type PartnerCampaign } from "./types/partners-campaign.interface";
-import { type Partner } from "./types/partners-config.interface";
+import { config } from "../config";
+import { type PartnerCampaign } from "../types/partners-campaign.interface";
+import { type Partner } from "../types/partners-config.interface";
 
 export const getPartnersCampaign = async (partners: Partner[]) => {
     try {
