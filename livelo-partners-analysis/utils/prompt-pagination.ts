@@ -21,12 +21,13 @@ export const displayPage = (
 
 export const paginate = async (pageSize: number, items: DisplayItems[]) => {
   let currentPage = 0;
-  const previousPage = "Previous Page";
-  const nextPage = "Next Page";
+  const previousPage = "Página Anterior";
+  const nextPage = "Próxima Página";
   const favoritePartners = "Favoritar"
-  const leaveOption = "Exit";
+  const settingsOption = 'Configurações'
+  const leaveOption = "Sair";
   const totalPages = Math.ceil(items.length / pageSize);
-  let action: 'favorite' | null = null
+  let action: 'favorite' | 'settings' | null = null
 
   while (true) {
     displayPage(currentPage, pageSize, items);
@@ -35,6 +36,7 @@ export const paginate = async (pageSize: number, items: DisplayItems[]) => {
     if (currentPage < totalPages - 1) choices.push(nextPage);
     if (currentPage > 0) choices.push(previousPage);
     choices.push(favoritePartners)
+    choices.push(settingsOption)
     choices.push(leaveOption);
 
     const answer = await inquirer.prompt([
@@ -54,6 +56,9 @@ export const paginate = async (pageSize: number, items: DisplayItems[]) => {
       break;
     } else if (answer.action === favoritePartners) {
       action = 'favorite'
+      break;
+    } else if (answer.action === settingsOption) {
+      action = 'settings'
       break;
     }
   }

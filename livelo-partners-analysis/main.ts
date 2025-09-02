@@ -6,6 +6,7 @@ import { shortenString } from "./utils/shorten-string";
 import type { DisplayItems } from "./types/display.interface";
 import { paginate } from "./utils/prompt-pagination";
 import { openFavoriteMenu } from "./utils/favorite-menu";
+import { openSettingsMenu } from "./utils/settings-menu";
 
 type CustomActiveCampaignPartner = PartnerCampaign & Partner;
 
@@ -53,12 +54,15 @@ const main = async () => {
       })
     );
 
-//   console.table(coolInfo);
-    // const action = 'favorite'
     const action = await paginate(PAGE_SIZE, coolInfo);
 
-    if (action === 'favorite') {
-      openFavoriteMenu(coolInfo)
+    switch(action) {
+      case 'favorite':
+        openFavoriteMenu(coolInfo)
+        break
+      case 'settings':
+        openSettingsMenu()
+        break
     }
 };
 
