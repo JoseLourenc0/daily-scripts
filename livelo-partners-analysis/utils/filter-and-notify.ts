@@ -1,9 +1,10 @@
 import { FavoritePartnerService } from "../src/db/favorite-partner";
 import { SettingsService } from "../src/db/settings";
+import type { PartnerInfo } from "../src/livelo-crawler";
 import type { DisplayItems } from "../types/display.interface";
 import notifySystem from "./notify";
 
-export const filterAndNotify = (partners: DisplayItems[]) => {
+export const filterAndNotify = (partners: PartnerInfo[]) => {
   const favoriteService = new FavoritePartnerService();
   const settingsService = new SettingsService();
 
@@ -20,7 +21,7 @@ export const filterAndNotify = (partners: DisplayItems[]) => {
   const { comparisonMode, pointsThreshold } = settings;
 
   const notifyList = partners.filter((p) => {
-    if (!favorites.includes(p.partnerCode)) return false;
+    if (!favorites.includes(p.name)) return false;
     if (comparisonMode === "parity" && p.parity < pointsThreshold) return false;
     if (comparisonMode === "parityClub" && p.parityClub < pointsThreshold)
       return false;
@@ -33,7 +34,7 @@ export const filterAndNotify = (partners: DisplayItems[]) => {
     console.log("🔔 Notificações:");
     let textMessageOnNotification = "";
     notifyList.forEach((p) => {
-      const formattedMesage = `${p.partnerCode} - ${p.name} | ${comparisonMode}: ${p[comparisonMode]}`;
+      const formattedMesage = `${p.name} - ${p.name} | ${comparisonMode}: ${p[comparisonMode]}`;
       console.log(formattedMesage);
       textMessageOnNotification += `${formattedMesage}\n`
     });

@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import { Database } from "bun:sqlite";
 
-type Settings = {
+export type Settings = {
   pointsThreshold: number;
   comparisonMode: "parityClub" | "parity";
 };

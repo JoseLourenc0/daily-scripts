@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
 import type { DisplayItems } from "../types/display.interface";
+import type { PartnerInfo } from "../src/livelo-crawler";
 
 export const clearScreen = () => {
   process.stdout.write("\x1Bc");
@@ -8,7 +9,7 @@ export const clearScreen = () => {
 export const displayPage = (
   page: number,
   pageSize: number,
-  items: DisplayItems[]
+  items: PartnerInfo[]
 ) => {
   clearScreen();
   const start = page * pageSize;
@@ -19,7 +20,7 @@ export const displayPage = (
   console.log("\n");
 };
 
-export const paginate = async (pageSize: number, items: DisplayItems[]) => {
+export const paginate = async (pageSize: number, items: PartnerInfo[]) => {
   let currentPage = 0;
   const previousPage = "Página Anterior";
   const nextPage = "Próxima Página";

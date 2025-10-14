@@ -1,22 +1,23 @@
 import inquirer from "inquirer";
 import { FavoritePartnerService } from "../src/db/favorite-partner";
 import type { DisplayItems } from "../types/display.interface";
+import type { PartnerInfo } from "../src/livelo-crawler";
 
 function shortenString(str: string, maxLength: number): string {
   if (!str) return "";
   return str.length > maxLength ? str.slice(0, maxLength - 3) + "..." : str;
 }
 
-export const openFavoriteMenu = async (partners: DisplayItems[]) => {
+export const openFavoriteMenu = async (partners: PartnerInfo[]) => {
   const service = new FavoritePartnerService();
   const existingFavorites = service.findAll().map((f) => f.partnerCode);
 
   let choices = partners.map((p) => ({
-    name: `${p.partnerCode} - ${shortenString(p.name, 25)} (clube: ${
+    name: `${p.name} - ${shortenString(p.name, 25)} (clube: ${
       p.parityClub
     } | padrão: ${p.parity})`,
-    value: p.partnerCode,
-    checked: existingFavorites.includes(p.partnerCode),
+    value: p.name,
+    checked: existingFavorites.includes(p.name),
   }));
 
   choices = choices.sort((a, b) => {
@@ -37,10 +38,10 @@ export const openFavoriteMenu = async (partners: DisplayItems[]) => {
   const selected = new Set(answers.selectedPartners as string[]);
 
   partners.forEach((p) => {
-    if (selected.has(p.partnerCode)) {
-      service.add(p.partnerCode);
+    if (selected.has(p.name)) {
+      service.add(p.name);
     } else {
-      service.remove(p.partnerCode);
+      service.remove(p.name);
     }
   });
 };
