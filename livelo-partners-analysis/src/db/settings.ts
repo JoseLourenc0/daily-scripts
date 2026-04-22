@@ -1,5 +1,8 @@
 import inquirer from "inquirer";
 import { Database } from "bun:sqlite";
+import path from "path";
+
+const DB_PATH = path.join(import.meta.dir, "..", "..", "app.db");
 
 export type Settings = {
   pointsThreshold: number;
@@ -10,7 +13,7 @@ export class SettingsService {
   private db: Database;
 
   constructor(private tableName = "settings") {
-    this.db = new Database("app.db");
+    this.db = new Database(DB_PATH);
     this.createTableIfNotExists();
   }
 

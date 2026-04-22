@@ -1,7 +1,7 @@
 import { paginate } from "./utils/prompt-pagination";
 import { openFavoriteMenu } from "./utils/favorite-menu";
 import { openSettingsMenu } from "./utils/settings-menu";
-import { getPartnersData } from "./utils/process-partners";
+
 import { filterAndNotify } from "./utils/filter-and-notify";
 import { LiveloCrawler } from "./src/livelo-crawler";
 
@@ -20,10 +20,10 @@ const main = async () => {
 
   switch (action) {
     case "favorite":
-      openFavoriteMenu(partners);
+      await openFavoriteMenu(partners);
       break;
     case "settings":
-      openSettingsMenu();
+      await openSettingsMenu();
       break;
   }
 };

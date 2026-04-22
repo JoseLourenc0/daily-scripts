@@ -34,7 +34,7 @@ export const filterAndNotify = (partners: PartnerInfo[]) => {
     console.log("🔔 Notificações:");
     let textMessageOnNotification = "";
     notifyList.forEach((p) => {
-      const formattedMesage = `${p.name} - ${p.name} | ${comparisonMode}: ${p[comparisonMode]}`;
+      const formattedMesage = `${p.name} | ${comparisonMode}: ${p[comparisonMode]}`;
       console.log(formattedMesage);
       textMessageOnNotification += `${formattedMesage}\n`
     });
