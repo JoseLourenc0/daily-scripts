@@ -26,27 +26,15 @@ export class LiveloCrawler {
     const $ = cheerio.load(html);
     const partners: PartnerInfo[] = [];
 
-    const getPointsInfo = (
-      context: any
-    ): { points: string | null; currency: string | null } => {
-      const text = context.text().replace(/\s+/g, " ").trim();
-      // Exemplo: "Até 8 pontos por R$ 1" ou "1 ponto por U$ 1"
-      const match = text.match(/(\d+)\s+ponto?s?\s+por\s+([RU]\$)/i);
-      return {
-        points: match ? match[1] : null,
-        currency: match ? match[2] : null,
-      };
+    const parsePointsFromStrong = (text: string): number => {
+      const match = text.match(/(\d+)\s+pontos?/i);
+      return match ? Number(match[1]) : 0;
     };
 
     $('a[data-testid="a_PartnerCard_card_link"]').each((_, el) => {
       const anchor = $(el);
       const url = anchor.attr("href")?.trim() || "";
-      const imageUrl =
-        anchor
-          .find('img[data-testid="img_PartnerCard_partnerImage"]')
-          .attr("src") || null;
 
-      // Nome (vem do alt da imagem)
       const name =
         anchor
           .find('img[data-testid="img_PartnerCard_partnerImage"]')
@@ -54,41 +42,48 @@ export class LiveloCrawler {
           ?.replace("Logo ", "")
           .trim() || "Desconhecido";
 
-      // Promoção
-      const isPromotion = !!anchor.find(
-        'span[data-testid="span_PartnerCard_promotionTag"]'
-      ).length;
+      const parityCard = anchor.find('[data-testid^="parity-card-"]');
+      const cardType = parityCard.attr("data-testid") || "";
+      const isPromotion = cardType.includes("PROMOTION");
+      const hasClub = cardType.includes("CLUB");
+      const isOnlyClub = cardType === "parity-card-PROMOTION_ONLY_CLUB";
 
-      // Bloco principal — pode ser "promotion" ou "bau"
-      const normalBlock =
-        anchor.find('div[data-testid="div_PartnerCard_promotion"]').length
-          ? anchor.find('div[data-testid="div_PartnerCard_promotion"]')
-          : anchor.find('div[data-testid="div_PartnerCard_bau"]');
+      const strongs: string[] = [];
+      parityCard.find('strong[data-testid="Text_Typography"]').each((_, s) => {
+        strongs.push($(s).text().trim());
+      });
 
-      const { points: parity, currency: normalCurrency } = getPointsInfo(
-        normalBlock.find('div[data-testid="Text_ParityText"]').first()
-      );
+      const cleanClone = parityCard.clone();
+      cleanClone.find("style").remove();
+      const cleanText = cleanClone.text().replace(/\s+/g, " ").trim();
+      const currencyMatch = cleanText.match(/por\s+([RU]\$)/i);
+      const currency = currencyMatch ? currencyMatch[1] : null;
 
-      // Clube
-      const clubBlock = anchor.find('div[data-testid="div_PartnerCard_clubHint"]');
-      const { points: parityClub, currency: clubCurrency } = getPointsInfo(
-        clubBlock.find('div[data-testid="Text_ParityText"]').first()
-      );
+      let parity = 0;
+      let parityClub = 0;
 
-      const parityOrZero = Number(parity) || 0
+      if (isOnlyClub) {
+        parityClub = strongs.length > 0 ? parsePointsFromStrong(strongs[0]) : 0;
+      } else if (hasClub) {
+        parity = strongs.length > 0 ? parsePointsFromStrong(strongs[0]) : 0;
+        parityClub = strongs.length > 1 ? parsePointsFromStrong(strongs[1]) : 0;
+      } else {
+        parity = strongs.length > 0 ? parsePointsFromStrong(strongs[0]) : 0;
+      }
+
+      if (!parityClub) parityClub = parity;
 
       partners.push({
         name,
         url: url.startsWith("http") ? url : `${this.baseUrl}${url}`,
-        currency: normalCurrency,
-        parityClub: Number(parityClub) || parityOrZero,
-        parity: parityOrZero,
+        currency,
+        parityClub,
+        parity,
         isPromotion,
-        // imageUrl,
       });
     });
 
-    return partners.sort((a,b) => a.parityClub > b.parityClub ? -1 : 1);
+    return partners.sort((a, b) => b.parityClub - a.parityClub);
   }
 }
 
